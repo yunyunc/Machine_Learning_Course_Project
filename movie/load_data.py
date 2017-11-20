@@ -1,4 +1,3 @@
-from sklearn.preprocessing import OneHotEncoder
 import numpy as np
 
 class load_data:
