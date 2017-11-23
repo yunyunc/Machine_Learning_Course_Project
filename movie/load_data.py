@@ -27,13 +27,20 @@ class load_data:
                     mv_info.append(line)
             return mv_info
 
-
     def parseUserFeature(self, line):
         age = int(line[1])
         age = self.parseAge(age)
         gen = [1, 0] if line[2] == 'M' else [0, 1]
         occ = self.parseOcc(line[3])
         return age+gen+occ
+
+    def parseMvFeature(self,line):
+        mv_features = [];
+        year = line[2].split('-')[2]
+        mv_features.append(int(year))
+        del line[:5]
+        [mv_features.append(int(genre)) for genre in line]
+        return mv_features
 
     def parseAge(self,age):
         if age<25:
