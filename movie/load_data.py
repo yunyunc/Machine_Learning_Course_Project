@@ -20,12 +20,23 @@ class load_data:
         if self.name == '100k':
             movie_info_file_name = 'data/movie/ml-100k/u.item'
             mv_info = []
-            with open(movie_info_file_name, 'r') as mv_info_file:
+            with open(movie_info_file_name, 'r', encoding='latin-1') as mv_info_file:
                 for line in mv_info_file:
                     line = line.strip().split('|')
                     line = self.parseMvFeature(line)
                     mv_info.append(line)
             return mv_info
+
+    def load_ratings(self):
+        if self.name == '100k':
+            rating_file_name = 'data/movie/ml-100k/u.data'
+            ratings = {}
+            with open(rating_file_name, 'r') as rating_file:
+                for line in rating_file:
+                    line = line.strip.split(' ')
+                    usr_id = int(line[0])
+                    if usr_id in ratings:
+                        ratings[usr_id].append((int(line[1]),int(line[2])))
 
     def parseUserFeature(self, line):
         age = int(line[1])
@@ -36,7 +47,10 @@ class load_data:
 
     def parseMvFeature(self,line):
         mv_features = [];
-        year = line[2].split('-')[2]
+        if line[1] == 'unknown':
+            year = 1800
+        else:
+            year = line[2].split('-')[2]
         mv_features.append(int(year))
         del line[:5]
         [mv_features.append(int(genre)) for genre in line]
@@ -65,4 +79,6 @@ class load_data:
         return list(occs.astype(int))
 
 test = load_data('100k')
+info = test.load_user_info()
 info = test.load_movie_info()
+info = test.load_ratings()
