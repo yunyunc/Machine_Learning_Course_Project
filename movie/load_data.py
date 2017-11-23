@@ -16,6 +16,18 @@ class load_data:
                     usr_info.append(line)
             return usr_info
 
+    def load_movie_info(self):
+        if self.name == '100k':
+            movie_info_file_name = 'data/movie/ml-100k/u.item'
+            mv_info = []
+            with open(movie_info_file_name, 'r') as mv_info_file:
+                for line in mv_info_file:
+                    line = line.strip().split('|')
+                    line = self.parseMvFeature(line)
+                    mv_info.append(line)
+            return mv_info
+
+
     def parseUserFeature(self, line):
         age = int(line[1])
         age = self.parseAge(age)
@@ -46,4 +58,4 @@ class load_data:
         return list(occs.astype(int))
 
 test = load_data('100k')
-info = test.load_user_info()
+info = test.load_movie_info()
