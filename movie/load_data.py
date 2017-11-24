@@ -46,7 +46,7 @@ class load_data:
         age = self.parseAge(age)
         gen = [1, 0] if line[2] == 'M' else [0, 1]
         occ = self.parseOcc(line[3])
-        return age+gen+occ
+        return gen+age+occ
 
     def parseMvFeature(self,line):
         mv_features = [];
