@@ -33,10 +33,13 @@ class load_data:
             ratings = {}
             with open(rating_file_name, 'r') as rating_file:
                 for line in rating_file:
-                    line = line.strip.split(' ')
+                    line = line.split('\t')
                     usr_id = int(line[0])
                     if usr_id in ratings:
                         ratings[usr_id].append((int(line[1]),int(line[2])))
+                    else:
+                        ratings[usr_id] = [(int(line[1]),int(line[2]))]
+            return ratings
 
     def parseUserFeature(self, line):
         age = int(line[1])
@@ -79,6 +82,6 @@ class load_data:
         return list(occs.astype(int))
 
 test = load_data('100k')
-info = test.load_user_info()
-info = test.load_movie_info()
+user_info = test.load_user_info()
+movie_info = test.load_movie_info()
 info = test.load_ratings()
