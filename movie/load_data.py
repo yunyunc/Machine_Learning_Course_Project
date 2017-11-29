@@ -80,8 +80,3 @@ class load_data:
         if  ind>= 0:
             occs[ind] = 1
         return list(occs.astype(int))
-
-test = load_data('100k')
-user_info = test.load_user_info()
-movie_info = test.load_movie_info()
-info = test.load_ratings()
