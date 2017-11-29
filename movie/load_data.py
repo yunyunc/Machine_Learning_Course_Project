@@ -8,23 +8,25 @@ class load_data:
     def load_user_info(self):
         if self.name=='100k':
             user_info_file_name = 'data/movie/ml-100k/u.user'
-            usr_info = []
+            usr_info = {}
             with open(user_info_file_name,'r') as usr_info_file:
                 for line in usr_info_file:
                     line = line.strip().split('|')
+                    user_id = int(line[0])
                     line = self.parseUserFeature(line)
-                    usr_info.append(line)
+                    usr_info[user_id] = line
             return usr_info
 
     def load_movie_info(self):
         if self.name == '100k':
             movie_info_file_name = 'data/movie/ml-100k/u.item'
-            mv_info = []
+            mv_info = {}
             with open(movie_info_file_name, 'r', encoding='latin-1') as mv_info_file:
                 for line in mv_info_file:
                     line = line.strip().split('|')
+                    mv_id = int(line[0])
                     line = self.parseMvFeature(line)
-                    mv_info.append(line)
+                    mv_info[mv_id] = line
             return mv_info
 
     def load_ratings(self):
@@ -43,40 +45,51 @@ class load_data:
 
     def parseUserFeature(self, line):
         age = int(line[1])
-        age = self.parseAge(age)
-        gen = [1, 0] if line[2] == 'M' else [0, 1]
-        occ = self.parseOcc(line[3])
-        return gen+age+occ
+        gen = line[2]
+        occ = line[3]
+        return {'age':age,'gender':gen,'occupation':occ}
 
     def parseMvFeature(self,line):
-        mv_features = [];
+        genres = [];
+        mv_features = {}
         if line[1] == 'unknown':
-            year = 1800
+            mv_features['year'] = 1800
         else:
-            year = line[2].split('-')[2]
-        mv_features.append(int(year))
+            mv_features['year'] = line[2].split('-')[2]
         del line[:5]
-        [mv_features.append(int(genre)) for genre in line]
+        [genres.append(int(genre)) for genre in line]
+        mv_features['genre'] = self.parseGenre(genres)
         return mv_features
 
-    def parseAge(self,age):
-        if age<25:
-            age_array = [1,0,0,0,0]
-        elif age>25 and age <35:
-            age_array = [0,1,0,0,0]
-        elif age>35 and age<45:
-            age_array = [0,0,1,0,0]
-        elif age>45 and age<55:
-            age_array = [0,0,0,1,0]
-        else: age_array = [0,0,0,0,1]
-        return age_array
+    def parseGenre(self,genres):
+        list_of_genres = ['unknown', 'action','adventure','animation','children','comedy','crime','documentary',
+                  'drama','fantasy','film-noir','horror','musical','mystery','romance','sci-fi','thriller',
+                  'war','western']
+        genres = np.asarray(genres)
+        genres = np.nonzero(genres)[0]
+        temp = []
+        for i in genres:
+            temp.append(list_of_genres[i])
+        return temp
 
-    def parseOcc(self,occ):
-        occupations = ['administrator','artist','doctor','educator','engineer','entertainment','executive','healthcare','homemaker',
-                       'lawyer','librarian','marketing','none','other','programmer','retired','salesman','scientist','student',
-                       'technician','writer']
-        occs = np.zeros(len(occupations))
-        ind = occupations.index(occ)
-        if  ind>= 0:
-            occs[ind] = 1
-        return list(occs.astype(int))
+    # def parseAge(self,age):
+    #     if age<25:
+    #         age_array = [1,0,0,0,0]
+    #     elif age>25 and age <35:
+    #         age_array = [0,1,0,0,0]
+    #     elif age>35 and age<45:
+    #         age_array = [0,0,1,0,0]
+    #     elif age>45 and age<55:
+    #         age_array = [0,0,0,1,0]
+    #     else: age_array = [0,0,0,0,1]
+    #     return age_array
+
+    # def parseOcc(self,occ):
+    #     occupations = ['administrator','artist','doctor','educator','engineer','entertainment','executive','healthcare','homemaker',
+    #                    'lawyer','librarian','marketing','none','other','programmer','retired','salesman','scientist','student',
+    #                    'technician','writer']
+    #     occs = np.zeros(len(occupations))
+    #     ind = occupations.index(occ)
+    #     if  ind>= 0:
+    #         occs[ind] = 1
+    #     return list(occs.astype(int))
