@@ -55,22 +55,23 @@ class load_data:
         if line[1] == 'unknown':
             mv_features['year'] = 1800
         else:
-            mv_features['year'] = line[2].split('-')[2]
+            mv_features['year'] = int(line[2].split('-')[2])
         del line[:5]
-        [genres.append(int(genre)) for genre in line]
-        mv_features['genre'] = self.parseGenre(genres)
+        [genres.append(int(genre)+1) for genre in line]
+        mv_features['genre'] = genres
+        # mv_features['genre'] = self.parseGenre(genres)
         return mv_features
 
-    def parseGenre(self,genres):
-        list_of_genres = ['unknown', 'action','adventure','animation','children','comedy','crime','documentary',
-                  'drama','fantasy','film-noir','horror','musical','mystery','romance','sci-fi','thriller',
-                  'war','western']
-        genres = np.asarray(genres)
-        genres = np.nonzero(genres)[0]
-        temp = []
-        for i in genres:
-            temp.append(list_of_genres[i])
-        return temp
+    # def parseGenre(self,genres):
+    #     list_of_genres = ['unknown', 'action','adventure','animation','children','comedy','crime','documentary',
+    #               'drama','fantasy','film-noir','horror','musical','mystery','romance','sci-fi','thriller',
+    #               'war','western']
+    #     genres = np.asarray(genres)
+    #     genres = np.nonzero(genres)[0]
+    #     temp = []
+    #     for i in genres:
+    #         temp.append(list_of_genres[i])
+    #     return temp
 
     # def parseAge(self,age):
     #     if age<25:
