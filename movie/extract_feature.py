@@ -17,7 +17,7 @@ def extract_user_feature(user_info):
     age = user_info['age']
     age = parse_age(age)
     gender = [1] if user_info['gender']=='M' else [2]
-    occ = [occupations.index(user_info['occupation'])]+1
+    occ = [occupations.index(user_info['occupation'])+1]
     return age+gender+occ
 
 
