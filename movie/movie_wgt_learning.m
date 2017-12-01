@@ -6,7 +6,7 @@ addpath(genpath(pwd))
 cd ..
 
 %%load data
-load data.mat
+load tr_data.mat
 data = zeros(length(FrameStack),24);
 for i=1:length(FrameStack)
     data(i,:) = FrameStack{i};
