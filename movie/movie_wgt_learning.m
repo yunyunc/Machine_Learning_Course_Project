@@ -40,6 +40,6 @@ suffStat = UGM_MRF_computeSuffStat(data,nodeMap,edgeMap,edgeStruct);
 nll = UGM_MRF_NLL(w,n_instances,suffStat,nodeMap,edgeMap,edgeStruct,@UGM_Infer_Tree)
 
 % Optimize
-w = minFunc(@UGM_MRF_NLL,w,[],n_instances,suffStat,nodeMap,edgeMap,edgeStruct,@UGM_Infer_Tree);
+w = minFunc(@UGM_MRF_NLL,w,[],n_instances,suffStat,nodeMap,edgeMap,edgeStruct,@UGM_Infer_LBP);
 
-
+[nodePot,edgePot] = UGM_MRF_makePotentials(w,nodeMap,edgeMap,edgeStruct);
