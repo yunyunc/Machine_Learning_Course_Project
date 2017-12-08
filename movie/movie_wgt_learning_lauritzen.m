@@ -22,13 +22,14 @@ for i=1:n_nodes-1
     adj(i,n_nodes) = 1;
 end
 adj = adj+adj';
-edgeStruct = UGM_makeEdgeStruct(adj,nStates,0,100); %no mex
+edgeStruct = UGM_makeEdgeStruct(adj,nStates,0,100);
 maxState = max(nStates);
 nEdges = edgeStruct.nEdges;
+edgeEnds = edgeStruct.edgeEnds;
 
 %%Make nodePot
-nodePot = zeros(nNodes,maxState);
-for n = 1:nNodes
+nodePot = zeros(n_nodes,maxState);
+for n = 1:n_nodes
     for s = 1:nStates(n)
         nodePot(n,s) = length(find(data(:,n) == s)) / n_instances;
     end
@@ -41,7 +42,7 @@ for e = 1:nEdges
     n2 = edgeEnds(e,2);
     for s1 = 1:nStates(n1)
         for s2 = 1:nStates(n2)
-            
+            edgePot(s1,s2,e) = length(find(data(:,n1) == s1 & data(:,n2) == s2)) / n_instances;
         end
     end
 end
