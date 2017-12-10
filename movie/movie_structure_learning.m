@@ -61,9 +61,3 @@ for e = 1:edgeStruct.nEdges
         adjFinal(n2,n1) = 1;
     end
 end
-
-% Display Graph (requires graphviz)
-figure;
-drawGraph(adjFinal);
-title('Estimated Structure');
-pause
