@@ -10,7 +10,7 @@ def extract_feature(user_info,movie_info,rating_info):
             mv_info = extract_movie_feature(movie_info[mv_id])
             usr_info = extract_user_feature(user_info[user])
             mv_rating = [1 if rating[1]<=3 else 2]
-            data.append(usr_info+mv_info+mv_rating)
+            data.append(usr_info+mv_info+[mv_id]+mv_rating)
     return data
 
 def extract_user_feature(user_info):

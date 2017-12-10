@@ -1,8 +1,8 @@
-from movie import load_data as L
-from movie import save_data as S
-from movie import get_info as G
-from movie import tr_te_split as T
-from movie import extract_feature as E
+import load_data as L
+import save_data as S
+import get_info as G
+import tr_te_split as T
+import extract_feature as E
 
 mv_lens_100k = L.load_data('100k')
 user_info = mv_lens_100k.load_user_info()
