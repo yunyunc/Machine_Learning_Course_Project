@@ -50,7 +50,7 @@ funObj = @(w)UGM_MRF_NLL(w,nInstances,suffStat,nodeMap,edgeMap,edgeStruct,inferF
 w = L1General2_PSSgb(funObj,w,regularizer);
 
 % Find Active Edges
-adjFinal = zeros(nNodes);
+adjFinal = zeros(n_nodes);
 for e = 1:edgeStruct.nEdges
 	params = edgeMap(:,:,e);
 	params = params(params(:)~=0);
