@@ -11,13 +11,13 @@ cd ..
 
 %%load data
 load tr_data.mat
-data = zeros(length(FrameStack),24);
+data = zeros(length(FrameStack),25);
 for i=1:length(FrameStack)
     data(i,:) = FrameStack{i};
 end
 clear FrameStack
-nInstances = length(data);
-n_nodes = 24;
+data = [data(:,1:23) data(:,25)]; %ignore movie id for now
+[nInstances, n_nodes] = size(data);
 
 %%Make edgeStruct
 nStates = max(data);
@@ -42,7 +42,8 @@ nEdgeParams = nParams-nNodeParams;
 regularizer = [zeros(nNodeParams,1);lambda*ones(nEdgeParams,1)];
 
 % Inference Method
-inferFunc = @UGM_Infer_MeanField;
+% inferFunc = @UGM_Infer_MeanField;
+inferFunc = @UGM_Infer_Exact;
 
 % Train
 suffStat = UGM_MRF_computeSuffStat(data,nodeMap,edgeMap,edgeStruct);
