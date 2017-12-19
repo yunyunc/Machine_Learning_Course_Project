@@ -11,12 +11,18 @@ cd ..
 
 %%load data
 load tr_data.mat
-data = zeros(length(FrameStack),25);
+data = zeros(length(FrameStack),57);
 for i=1:length(FrameStack)
-    data(i,:) = FrameStack{i};
+    data_i = FrameStack{i};
+    age_one_hot = ones(1,5);
+    age_one_hot(data_i(1)) = 2;
+    occ_one_hot = ones(1,21);
+    occ_one_hot(data_i(3)) = 2;
+    year_one_hot = ones(1,10);
+    year_one_hot(data_i(4)) = 2;
+    data(i,:) = [age_one_hot data_i(2) occ_one_hot year_one_hot data_i(5:23) data_i(25)]; %ignore movie id for now
 end
 clear FrameStack
-data = [data(:,1:23) data(:,25)]; %ignore movie id for now
 [nInstances, n_nodes] = size(data);
 
 %%Make full adj
@@ -40,7 +46,7 @@ w = zeros(nParams,1);
 [nodePot,edgePot] = UGM_MRF_makePotentials(w,nodeMap,edgeMap,edgeStruct);
 
 % Make Edge Regularizer
-lambda = 5;
+lambda = 10;
 nNodeParams = max(nodeMap(:));
 nParams = max(edgeMap(:));
 nEdgeParams = nParams-nNodeParams;
@@ -59,7 +65,7 @@ adjFinal = zeros(n_nodes);
 for e = 1:edgeStruct.nEdges
     params = edgeMap(:,:,e);
     params = params(params(:)~=0);
-    if any(w(params(:)) ~= 0)
+    if any(w(params(:)) > 1e-3)
         n1 = edgeStruct.edgeEnds(e,1);
         n2 = edgeStruct.edgeEnds(e,2);
         adjFinal(n1,n2) = 1;
