@@ -39,7 +39,7 @@ nEdges = edgeStruct.nEdges;
 ising = 0; % Use full potentials
 tied = 0; % Each node/edge has its own parameters
 [nodeMap,edgeMap] = UGM_makeMRFmaps(n_nodes,edgeStruct,ising,tied);
-nParams = max([nodeMap(:);edgeMap(:)])
+nParams = max([nodeMap(:);edgeMap(:)]);
 
 %%Make Potentials
 w = zeros(nParams,1);
@@ -65,10 +65,12 @@ adjFinal = zeros(n_nodes);
 for e = 1:edgeStruct.nEdges
     params = edgeMap(:,:,e);
     params = params(params(:)~=0);
-    if any(w(params(:)) > 1e-3)
+    if sum(w(params(:)) > 1e-2)
+%     if any(w(params(:)) > 1e-3)
         n1 = edgeStruct.edgeEnds(e,1);
         n2 = edgeStruct.edgeEnds(e,2);
         adjFinal(n1,n2) = 1;
         adjFinal(n2,n1) = 1;
     end
 end
+density = length(find(adjFinal == 0)) / (57*57)
