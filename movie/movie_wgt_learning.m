@@ -7,8 +7,8 @@ cd ..
 
 %%Load data
 load tr_data.mat
-data = zeros(length(FrameStack)/80,57);
-for i=1:length(FrameStack)/80
+data = zeros(length(FrameStack),57);
+for i=1:length(FrameStack)
     data_i = FrameStack{i};
     age_one_hot = ones(1,5);
     age_one_hot(data_i(1)) = 2;
@@ -22,7 +22,7 @@ clear FrameStack
 [nInstances, n_nodes] = size(data);
 
 %%Load adj from memory
-load learned_ugm_1.5_1000_trIns.mat
+load learned_ugm_1_5_1000_trIns.mat
 adj = adjFinal;
 
 %%Make edgeStruct
@@ -32,7 +32,7 @@ maxState = max(nStates);
 nEdges = edgeStruct.nEdges;
 
 %%Training
-ising = 0; % Use full potentials
+ising = 1; % Use ising 
 tied = 0; % Each node/edge has its own parameters
 [nodeMap,edgeMap] = UGM_makeMRFmaps(n_nodes,edgeStruct,ising,tied);
 nParams = max([nodeMap(:);edgeMap(:)])
@@ -42,7 +42,7 @@ w = zeros(nParams,1);
 suffStat = UGM_MRF_computeSuffStat(data,nodeMap,edgeMap,edgeStruct);
 
 % Evaluate NLL
-inferFunc = @UGM_Infer_MeanField;
+inferFunc = @UGM_Infer_LBP;
 nll = UGM_MRF_NLL(w,nInstances,suffStat,nodeMap,edgeMap,edgeStruct,inferFunc)
 
 % Optimize

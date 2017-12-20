@@ -9,7 +9,8 @@ cd ..
 load tr_data.mat
 data = zeros(length(FrameStack),24);
 for i=1:length(FrameStack)
-    data(i,:) = FrameStack{i};
+    temp = FrameStack{i};
+    data(i,:) = [temp(1:23) temp(25)];
 end
 clear FrameStack
 n_instances = length(data);
