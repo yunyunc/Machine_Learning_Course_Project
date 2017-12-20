@@ -36,7 +36,7 @@ maxState = max(nStates);
 nEdges = edgeStruct.nEdges;
 
 %%Training
-ising = 0; % Use full potentials
+ising = 1; % Use full potentials
 tied = 0; % Each node/edge has its own parameters
 [nodeMap,edgeMap] = UGM_makeMRFmaps(n_nodes,edgeStruct,ising,tied);
 nParams = max([nodeMap(:);edgeMap(:)]);
