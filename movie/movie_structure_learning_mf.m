@@ -74,3 +74,8 @@ for e = 1:edgeStruct.nEdges
     end
 end
 density = length(find(adjFinal == 0)) / (57*57)
+
+%%plotting
+node_names = {'age<=15','15<age<=25','25<age<=36','36<age<=57','58<age','gender','administrator','artist', 'doctor', 'educator', 'engineer', 'entertainment', 'executive', 'healthcare', 'homemaker','lawyer','librarian','marketing','none','other','programmer','retired','salesman','scientist','student', 'technician','writer','year>=1997','year=1996','year=1995','year=1994','year=1993','1982<=year<1993','1971<=year<1982','1960<=year<1971','1940<=year<1960','year<=1939','unknown','action','advanture','animation','children','comedy','crime','documentary','drama','fantasy','film-noir','horror','musical','mystery','romance','sci-fi','thriller','war','western','rating'};
+G = graph(adjFinal,node_names);
+plot(G)
