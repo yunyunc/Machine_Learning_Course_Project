@@ -11,15 +11,22 @@ cd ..
 
 %%load data
 load tr_data.mat
-data = zeros(length(FrameStack),25);
-for i=1:length(FrameStack)
-    data(i,:) = FrameStack{i};
+data = zeros(length(FrameStack)/80,57);
+for i=1:length(FrameStack)/80
+    data_i = FrameStack{i};
+    age_one_hot = ones(1,5);
+    age_one_hot(data_i(1)) = 2;
+    occ_one_hot = ones(1,21);
+    occ_one_hot(data_i(3)) = 2;
+    year_one_hot = ones(1,10);
+    year_one_hot(data_i(4)) = 2;
+    data(i,:) = [age_one_hot data_i(2) occ_one_hot year_one_hot data_i(5:23) data_i(25)]; %ignore movie id for now
 end
 clear FrameStack
-data = [data(:,1:23) data(:,25)]; %ignore movie id for now
 [nInstances, n_nodes] = size(data);
+y = data;
 
-%%Make adj
+%%Make full adj
 nStates = max(data);
 adj = ones(n_nodes);
 adj = adj+diag(-1*ones(1,n_nodes));
@@ -30,25 +37,30 @@ maxState = max(nStates);
 nEdges = edgeStruct.nEdges;
 
 %%Training
-ising = 0; % Use full potentials
-tied = 0; % Each node/edge has its own parameters
+ising = 1;
+tied = 0; % Each node/edge has 1 parameter (ising)
 [nodeMap,edgeMap] = UGM_makeMRFmaps(n_nodes,edgeStruct,ising,tied);
-nParams = max([nodeMap(:);edgeMap(:)])
+nParams = max([nodeMap(:);edgeMap(:)]);
+
+%%%Make W
+w = zeros(nParams,1);
 
 %%Make Potentials
-w = zeros(nParams,1);
 [nodePot,edgePot] = UGM_MRF_makePotentials(w,nodeMap,edgeMap,edgeStruct);
 
-% Make Edge Regularizer
+%Make Edge Regularizer
 lambda = 5;
 nNodeParams = max(nodeMap(:));
 nParams = max(edgeMap(:));
 nEdgeParams = nParams-nNodeParams;
 regularizer = [zeros(nNodeParams,1);lambda*ones(nEdgeParams,1)];
 
+%Make XNode & Xedge
+Xnode = [ones(nInstances,1,n_nodes)];
+Xedge = [ones(nInstances,1,nEdges)];
+
 %% Train
-suffStat = UGM_MRF_computeSuffStat(data,nodeMap,edgeMap,edgeStruct);
-funObj = @(w)MRF_PseudoNll(w,nInstances,suffStat,nodeMap,edgeMap,edgeStruct);
+funObj = @(w)UGM_CRF_PseudoNLL(w,Xnode,Xedge,y,nodeMap,edgeMap,edgeStruct);
 w = L1General2_PSSgb(funObj,w,regularizer);
 
 % Find Active Edges
@@ -63,3 +75,4 @@ for e = 1:edgeStruct.nEdges
         adjFinal(n2,n1) = 1;
     end
 end
+density = length(find(adjFinal == 0)) / (57*57)

@@ -1,4 +1,3 @@
-
 %% Load Noisy X
 clear all
 close all
@@ -42,7 +41,7 @@ adj(sub2ind([nNodes nNodes],ind,ind+nRows)) = 1;
 
 % Add Up/Left Edges
 adj = adj+adj';
-edgeStruct = UGM_makeEdgeStruct(adj,nStates);
+edgeStruct = UGM_makeEdgeStruct(adj,nStates,0,100);
 nEdges = edgeStruct.nEdges;
 
 %% Make Xnode, Xedge, nodeMap, edgeMap, initialize weights
@@ -92,8 +91,13 @@ pause
 %% Train with Pseudo-likelihood
 
 w = zeros(nParams,1);
+lambda = 5;
+nNodeParams = max(nodeMap(:)); 
+nParams = max(edgeMap(:));
+nEdgeParams = nParams-nNodeParams;
+regularizer = [zeros(nNodeParams,1);lambda*ones(nEdgeParams,1)];
 funObj = @(w)UGM_CRF_PseudoNLL(w,Xnode,Xedge,y,nodeMap,edgeMap,edgeStruct);
-w = minFunc(funObj,w);
+w = L1General2_PSSgb(funObj,w,regularizer);
 
 %% Evaluate with learned parameters
 
@@ -154,4 +158,3 @@ colormap gray
 title('GraphCut Decoding with constrained loopy BP parameters');
 fprintf('(paused)\n');
 pause
-
