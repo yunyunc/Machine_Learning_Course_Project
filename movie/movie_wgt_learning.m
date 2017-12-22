@@ -1,5 +1,5 @@
-clear all
-close all
+% clear all
+% close all
 
 cd UGM
 addpath(genpath(pwd))
@@ -22,7 +22,7 @@ clear FrameStack
 [nInstances, n_nodes] = size(data);
 
 %%Load adj from memory
-load learned_ugm_1_5_1000_trIns.mat
+load learned_ugm_2000_trlns.mat
 adj = adjFinal;
 
 %%Make edgeStruct
@@ -42,10 +42,23 @@ w = zeros(nParams,1);
 suffStat = UGM_MRF_computeSuffStat(data,nodeMap,edgeMap,edgeStruct);
 
 % Evaluate NLL
-inferFunc = @UGM_Infer_LBP;
+inferFunc = @UGM_Infer_MeanField;
 nll = UGM_MRF_NLL(w,nInstances,suffStat,nodeMap,edgeMap,edgeStruct,inferFunc)
 
 % Optimize
 w = minFunc(@UGM_MRF_NLL,w,[],nInstances,suffStat,nodeMap,edgeMap,edgeStruct,inferFunc);
 
 [nodePot,edgePot] = UGM_MRF_makePotentials(w,nodeMap,edgeMap,edgeStruct);
+
+% adjFinal = zeros(n_nodes,n_nodes);
+% for e = 1:edgeStruct.nEdges
+%     params = edgeMap(:,:,e);
+%     params = params(params(:)~=0);
+% %     if any(w(params(:)) ~= 0)
+%         n1 = edgeStruct.edgeEnds(e,1);
+%         n2 = edgeStruct.edgeEnds(e,2);
+%         temp = w(params(:));
+%         adjFinal(n1,n2) = temp(1);
+%         adjFinal(n2,n1) = temp(1);
+% %     end
+% end
